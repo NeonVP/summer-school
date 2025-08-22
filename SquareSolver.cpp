@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <math.h>
 
+// read about dynamic memory and calloc, realloc, malloc
+// add assert
+
 enum cntRoots
 {
 	INF = -1,
@@ -9,9 +12,7 @@ enum cntRoots
 	TWO = 2
 };
 
-
 const float EPS = 1e-10f;
-
 
 cntRoots SolveEquation(double a, double b, double c, double *x1, double *x2);
 cntRoots linear_equation(double *x1, double b, double c);
@@ -21,8 +22,10 @@ bool is_zero(double x);
 
 void NameOfProgrammAndAuthor(void);
 
-int CheckInput(double *coef_a, double *coef_b, double *coef_c);
+int Input(double *coef_a, double *coef_b, double *coef_c);
 int OutputRoots(cntRoots nRoots, double x1, double x2);
+
+bool ClearBuffer();
 
 
 
@@ -31,26 +34,12 @@ int main(void) {
 
 	printf("Enter coefficients of square equation: ");
 
-	double coef_a = 0, coef_b = 0, coef_c = 0;
+	double coef_a = NAN, coef_b = 0, coef_c = 0;		// add NAN
 	double x1 = 0, x2 = 0;
-	bool flag = false;
-	while (!flag) {
-		if (CheckInput(&coef_a, &coef_b, &coef_c)) {
-			flag = true;
-			cntRoots nRoots = SolveEquation(coef_a, coef_b, coef_c, &x1, &x2);
+	Input(&coef_a, &coef_b, &coef_c);
+	cntRoots nRoots = SolveEquation(coef_a, coef_b, coef_c, &x1, &x2);
+	OutputRoots(nRoots, x1, x2);
 
-			if (OutputRoots(nRoots, x1, x2) == 1) {
-				printf("\n\nCorrect Output\n");
-			}
-			else {
-				printf("\n\n!!!Incorrect Output!!!\n");
-			}
-		}
-		else {
-			printf("Incorrect Input. Try again, please.\n"
-		  "Enter coefficients of square equation: ");
-		}
-	}
 	
 	return 0;
 }
@@ -83,7 +72,8 @@ cntRoots linear_equation(double *x1, double b, double c) {
 cntRoots square_equation(double *x1, double *x2, double a, double b, double c) {
 	if (is_zero(c)) {
 		*x1 = 0;
-		*x2 = - (b / a);
+		*x2 = - (b / a);	// call linear_equation		ax+b=0
+
 		return TWO;
 	}
 	else {
@@ -91,11 +81,13 @@ cntRoots square_equation(double *x1, double *x2, double a, double b, double c) {
 
 		if (is_zero(disc)) {
 			*x1 = - (b / (2 * a));
+
 			return ONE;
 		}
-		else if (disc > 0) {
+		else if (disc > 0) {			// add func for compare double and null
 			*x1 = (-b + sqrt(disc)) / (2*a);
 			*x1 = (-b - sqrt(disc)) / (2*a);
+
 			return TWO;
 		}
 		else {
@@ -121,12 +113,17 @@ bool is_zero(double x) {
 
 //read about eof
 
-int CheckInput(double *coef_a, double *coef_b, double *coef_c) {			//   !!!!!!!!!
-	int result = scanf("%lg %lg %lg", coef_a, coef_b, coef_c);
-	printf("CHECK %lg %lg %lg\n", *coef_a, *coef_b, *coef_c);
-	if (result == 3)
-		return 1;
-	while (getchar() != '\n');
+bool ClearBuffer() {
+	while (getchar() != '\n') {}
+	return false;
+}
+
+int Input(double *coef_a, double *coef_b, double *coef_c) {
+	while (scanf("%lg %lg %lg", coef_a, coef_b, coef_c) != 3) {
+		ClearBuffer();
+		printf("Incorrect Input. Try again, please.\n"
+		  "Enter coefficients of square equation: ");
+	}
 	return 0;
 } 
 
