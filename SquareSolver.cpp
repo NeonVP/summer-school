@@ -1,37 +1,106 @@
 #include <stdio.h>
 #include <math.h>
 
+enum cntRoots
+{
+	INF = -1,
+	ZERO = 0, 
+	ONE = 1, 
+	TWO = 2
+};
+
+
 const float EPS = 1e-10f;
 
-// void SolveEquation(void);
-// void NameOfProgrammAndAuthor(void);
-// void CheckInput(void);
-// void OutputRoots(void);
 
-int SolveEquation(double a, double b, double c, double* x1, double* x2) {
-	if (abs(a) < EPS && abs(b) < EPS)		// func equal_zero
-		return -1;
+cntRoots SolveEquation(double a, double b, double c, double *x1, double *x2);
+cntRoots linear_equation(double *x1, double b, double c);
+cntRoots square_equation(double *x1, double *x2, double a, double b, double c);
 
-	if (abs(a) < EPS)
-		return 11;
+bool is_zero(double x);
 
-	if (abs(c) < EPS) {
-		*x1 = - (b / a);
+void NameOfProgrammAndAuthor(void);
 
-		return 2;
+int CheckInput(double *coef_a, double *coef_b, double *coef_c);
+int OutputRoots(cntRoots nRoots, double x1, double x2);
+
+
+
+int main(void) {
+	NameOfProgrammAndAuthor();
+
+	printf("Enter coefficients of square equation: ");
+
+	double coef_a = 0, coef_b = 0, coef_c = 0;
+	double x1 = 0, x2 = 0;
+	bool flag = false;
+	while (!flag) {
+		if (CheckInput(&coef_a, &coef_b, &coef_c)) {
+			flag = true;
+			cntRoots nRoots = SolveEquation(coef_a, coef_b, coef_c, &x1, &x2);
+
+			if (OutputRoots(nRoots, x1, x2) == 1) {
+				printf("\n\nCorrect Output\n");
+			}
+			else {
+				printf("\n\n!!!Incorrect Output!!!\n");
+			}
+		}
+		else {
+			printf("Incorrect Input. Try again, please.\n"
+		  "Enter coefficients of square equation: ");
+		}
 	}
+	
+	return 0;
+}
 
-	double diskriminant = b * b - 4 * a * c;
-	if (abs(diskriminant) < EPS) {
-		*x1 = - (b / (2*a));
 
-		return 1;
+cntRoots SolveEquation(double a, double b, double c, double *x1, double *x2) {
+	if (is_zero(a) && is_zero(b) && is_zero(c)) {
+		return INF;
 	}
-	else if (diskriminant > 0) {
-		*x1 = (-b + sqrt(diskriminant)) / (2 * a);		// check rename disc
-		*x2 = (-b - sqrt(diskriminant)) / (2 * a);
+	if (is_zero(a) && is_zero(b) && !is_zero(c)) {
+		return ZERO;
+	}
+	if (is_zero(a)) {
+		return linear_equation(x1, b, c);
+	}
+	else {
+		return square_equation(x1, x2, a, b, c);
+	}
+}
 
-		return 2;
+
+
+cntRoots linear_equation(double *x1, double b, double c) {
+	printf("This is not a square equation, but a linear one.\n");
+	*x1 = - (c / b);
+	return ONE;
+}
+
+
+cntRoots square_equation(double *x1, double *x2, double a, double b, double c) {
+	if (is_zero(c)) {
+		*x1 = 0;
+		*x2 = - (b / a);
+		return TWO;
+	}
+	else {
+		double disc = b * b - 4 * a * c;
+
+		if (is_zero(disc)) {
+			*x1 = - (b / (2 * a));
+			return ONE;
+		}
+		else if (disc > 0) {
+			*x1 = (-b + sqrt(disc)) / (2*a);
+			*x1 = (-b - sqrt(disc)) / (2*a);
+			return TWO;
+		}
+		else {
+			return ZERO;
+		}
 	}
 }
 
@@ -41,76 +110,43 @@ void NameOfProgrammAndAuthor(void) {
         "# (c) NeonVP, 2025\n\n");
 }
 
+
+bool is_zero(double x) {
+	return (abs(x) < EPS);
+}
+
 // stdin 
 // stdout
 // stderr
 
 //read about eof
 
-int CheckInput(double *coef_a, double *coef_b, double *coef_c) {
-	scanf("%lg %lg %lg", *coef_a, *coef_b, *coef_c);
-	printf("@@@ %lg %lg %lg\n", *coef_a, *coef_b, *coef_c);
+int CheckInput(double *coef_a, double *coef_b, double *coef_c) {			//   !!!!!!!!!
+	int result = scanf("%lg %lg %lg", coef_a, coef_b, coef_c);
+	printf("CHECK %lg %lg %lg\n", *coef_a, *coef_b, *coef_c);
 	if (result == 3)
 		return 1;
+	while (getchar() != '\n');
 	return 0;
 } 
 
 
-int OutputRoots(int nRoots, double x1, double x2) {
+int OutputRoots(cntRoots nRoots, double x1, double x2) {
 	switch (nRoots){
-		case -1:			// magic number		define/const/enum 
-			printf("This is not a quadratic equation, but a linear one.\n");
+		case INF:
+			printf("The equation has an infinity number of roots.\n");
 			return 1;
-
-		case 0: 
-			printf("There are no solutions.\n");
-            return 1;
-
-		case 1: 
-			printf("There is one solution: %lg\n", x1);
+		case ZERO:
+			printf("There are no roots.\n");
 			return 1;
-
-
-		case 11: 
-			printf("This is not a quadratic equation, but a linear one.\n");
-            printf("There are one solution: %lg\n", x1);
-            return 1;
-		
-
-		case 2: 
-			printf("There are two solutions: %lg and %lg\n", x1, x2);
+		case ONE:
+			printf("There is 1 roots: %lg.\n", x1);
 			return 1;
-
-		case 3: 
-			printf("The equation has an infinite number of roots\n");
+		case TWO:
+			printf("There is 2 roots: %lg and %lg.\n", x1, x2);
 			return 1;
+		default:
+			printf("Unknown number of solutions");
 	}
-
-	return 0;
-}
-
-
-int main(void) {
-	NameOfProgrammAndAuthor();
-
-	printf("Enter coefficients of square equation: ");
-
-	double coef_a = 0, coef_b = 0, coef_c = 0, x1 = 0, x2 = 0;//
-
-	if (CheckInput(&coef_a, &coef_b, &coef_c)) {
-		int nRoots = SolveEquation(coef_a, coef_b, coef_c, &x1, &x2);
-
-		if (OutputRoots(nRoots, x1, x2) == 1) {
-				printf("\n\nCorrect Output\n");
-		}
-		else {
-			printf("\n\n!!!Incorrect Output!!!\n");
-		}
-	}	
-	else {
-		printf("Incorrect Input. Try again, please. \n\n");
-		break;
-	}
-	
 	return 0;
 }
