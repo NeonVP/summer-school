@@ -46,6 +46,8 @@ int main(void) {
 	double x1 = NAN, x2 = NAN;
 	Input(&coef_a, &coef_b, &coef_c);
 	cntRoots nRoots = SolveEquation(coef_a, coef_b, coef_c, NULL, &x2);
+	assert(x1 != NULL);
+	assert(x2 != NULL);
 	OutputRoots(nRoots, x1, x2);
 
 	
