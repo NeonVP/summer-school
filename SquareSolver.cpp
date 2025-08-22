@@ -47,8 +47,9 @@ void NameOfProgrammAndAuthor(void) {
 
 //read about eof
 
-int CheckInput(int result, double *coef_a, double coef_b, double coef_c) {
-	printf("@@@ %lg %lg %lg\n", coef_a, coef_b, coef_c);
+int CheckInput(double *coef_a, double *coef_b, double *coef_c) {
+	scanf("%lg %lg %lg", *coef_a, *coef_b, *coef_c);
+	printf("@@@ %lg %lg %lg\n", *coef_a, *coef_b, *coef_c);
 	if (result == 3)
 		return 1;
 	return 0;
@@ -96,7 +97,7 @@ int main(void) {
 
 	double coef_a = 0, coef_b = 0, coef_c = 0, x1 = 0, x2 = 0;//
 
-	if (CheckInput(scanf("%lg %lg %lg", &coef_a, &coef_b, &coef_c), &coef_a, coef_b, coef_c)) {
+	if (CheckInput(&coef_a, &coef_b, &coef_c)) {
 		int nRoots = SolveEquation(coef_a, coef_b, coef_c, &x1, &x2);
 
 		if (OutputRoots(nRoots, x1, x2) == 1) {
@@ -113,8 +114,3 @@ int main(void) {
 	
 	return 0;
 }
-
-
-
-
-
