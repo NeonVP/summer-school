@@ -45,9 +45,7 @@ int main(void) {
 	double coef_a = NAN, coef_b = NAN, coef_c = NAN;
 	double x1 = NAN, x2 = NAN;
 	Input(&coef_a, &coef_b, &coef_c);
-	cntRoots nRoots = SolveEquation(coef_a, coef_b, coef_c, NULL, &x2);
-	assert(x1 != NULL);
-	assert(x2 != NULL);
+	cntRoots nRoots = SolveEquation(coef_a, coef_b, coef_c, &x1, &x2);
 	OutputRoots(nRoots, x1, x2);
 
 	
@@ -59,6 +57,8 @@ cntRoots SolveEquation(double a, double b, double c, double *x1, double *x2) {
 	assert(std::isfinite (a));
 	assert(std::isfinite (b));
 	assert(std::isfinite (c));
+	assert(x1 != NULL);
+	assert(x2 != NULL);
 	if (CompWithNull(a) == EQUAL) {
 		if (CompWithNull(b) == EQUAL) {
 			if (CompWithNull(c) == EQUAL) {
@@ -78,10 +78,10 @@ cntRoots SolveEquation(double a, double b, double c, double *x1, double *x2) {
 }
 
 
-
 cntRoots linear_equation(double *x1, double b, double c) {
 	assert(std::isfinite (b));
 	assert(std::isfinite (c));
+	assert(x1 != NULL);
 	printf("This is not a square equation, but a linear one.\n");
 	*x1 = - (c / b);
 
@@ -93,6 +93,8 @@ cntRoots square_equation(double *x1, double *x2, double a, double b, double c) {
 	assert(std::isfinite (a));
 	assert(std::isfinite (b));
 	assert(std::isfinite (c));
+	assert(x1 != NULL);
+	assert(x2 != NULL);
 	if (CompWithNull(c) == EQUAL) {
 		*x1 = 0;
 		linear_equation(x2, a, b);	// call linear_equation		ax+b=0
@@ -160,8 +162,6 @@ int Input(double *coef_a, double *coef_b, double *coef_c) {
 
 
 int OutputRoots(cntRoots nRoots, double x1, double x2) {
-	assert(x1 != NULL);
-	assert(x2 != NULL);
 	switch (nRoots){
 		case INF:
 			printf("The equation has an infinity number of roots.\n");
@@ -179,4 +179,13 @@ int OutputRoots(cntRoots nRoots, double x1, double x2) {
 			printf("Unknown number of solutions");
 	}
 	return 0;
+}
+
+
+int TestSolveEquation() {
+	double x1 = 0, x2 = 0;
+	cntRoots nRoots = SolveEquation(1, -5, 6, &x1, &x2);		// 2, 3
+	if (!(nRoots == TWO && x1 == 3 && x2 == 2)) {
+		printf("FAILED: SolveEquation(-1, 5, 6, ...) -> 2, x1 = %lf, x2 = %lf (should be x1 = 3, x2 = 2)\n", x1, x2);
+	}
 }
