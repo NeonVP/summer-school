@@ -3,7 +3,6 @@
 #include <math.h>
 
 // read about dynamic memory and calloc, realloc, malloc
-// add massivi and unit tests on masivi
 enum cntRoots
 {
 	INF = -1,
@@ -33,6 +32,9 @@ int Input(double *coefs);
 int OutputRoots(cntRoots nRoots, double *roots);
 
 bool ClearBuffer();
+
+void TestSolveEquation();
+const char* cntRoots_to_str(cntRoots string);
 
 int main() {
 	NameOfProgrammAndAuthor();
@@ -131,7 +133,7 @@ CompWithNull CompareDoubleNull(double n) {
 
 }
 
-void NameOfProgrammAndAuthor(void) {
+void NameOfProgrammAndAuthor() {
 	printf("# Square equation solver\n"
         "# (c) NeonVP, 2025\n\n");
 }
@@ -144,7 +146,7 @@ void NameOfProgrammAndAuthor(void) {
 //read about eof
 
 bool ClearBuffer() {
-	while (getchar() != '\n') {}
+	while (getchar() != EOF) {}
 	return false;
 }
 
@@ -179,10 +181,41 @@ int OutputRoots(cntRoots nRoots, double *roots) {
 }
 
 
-// int TestSolveEquation() {
-// 	double x1 = 0, x2 = 0;
-// 	cntRoots nRoots = SolveEquation(1, -5, 6, &x1, &x2);		// 2, 3
-// 	if (!(nRoots == TWO && x1 == 2 && x2 == 3)) {
-// 		printf("FAILED: SolveEquation(-1, 5, 6, ...) -> 2, x1 = %lf, x2 = %lf (should be x1 = 3, x2 = 2)\n", x1, x2);
-// 	}
-// }
+void TestSolveEquation() {
+	double tests[8][2][3] =
+		{
+		{{1, -5, 6}, {2, 3}},
+		{{1, -4, 4}, {2, 0}},
+		{{1, 2, 5}, {0, 0}},
+		{{0, 2, -4}, {2, 0}},
+		{{4, 0, -16}, {-2, 2}},
+		{{2, -6, 0}, {0, 3}},
+		{{0, 0, 0}, {0, 0}},
+		{{0, 0, 5}, {0, 0}}
+		};
+
+	cntRoots tests_nRoots[8] = {TWO, ONE, ZERO, ONE, TWO, TWO, INF, ZERO};
+
+	int i = 0;
+	for (i = 0; i < 7; i++) {
+		double roots[2] = {};
+		cntRoots nRoots = SolveEquation(tests[i][0], roots);		// 2, 3
+		if (!(nRoots == tests_nRoots[i] && roots[0] == tests[i][1][0] && roots[1] == tests[i][1][1])) {
+			printf("FAILED: SolveEquation(%lf, %lf, %lf, ...) -> %s, x1 = %lf, x2 = %lf (should be x1 = %lf, x2 = %lf, %s)\n",
+				tests[i][0][0], tests[i][0][1], tests[i][0][2],
+				cntRoots_to_str(nRoots),
+				roots[0], roots[1],
+				tests[i][1][0], tests[i][1][1], tests_nRoots[i]);
+		}
+	}
+}
+
+const char* cntRoots_to_str(cntRoots string) {
+	switch (string) {
+		case INF: return "INF";
+		case ZERO: return "0";
+		case ONE: return "1";
+		case TWO: return "2";
+		default: return "Error";
+	}
+}
