@@ -21,16 +21,16 @@ enum CompWithNull
 
 const float EPS = 1e-10f;
 
-cntRoots SolveEquation(double *coefs, double *x1, double *x2);
+cntRoots SolveEquation(double *coefs, double *roots);
 cntRoots linear_equation(double *x1, double b, double c);
-cntRoots square_equation(double *x1, double *x2, double *coefs);
+cntRoots square_equation(double *roots, double *coefs);
 
 CompWithNull CompareDoubleNull(double n);
 
 void NameOfProgrammAndAuthor();
 
 int Input(double *coefs);
-int OutputRoots(cntRoots nRoots, double x1, double x2);
+int OutputRoots(cntRoots nRoots, double *roots);
 
 bool ClearBuffer();
 
@@ -40,21 +40,20 @@ int main() {
 	printf("Enter coefficients of square equation: ");
 
 	double coefs[3] = {};
-	double x1 = NAN, x2 = NAN;
+	double roots[2] = {};
 	Input(coefs);
-	cntRoots nRoots = SolveEquation(coefs, &x1, &x2);
-	OutputRoots(nRoots, x1, x2);
+	cntRoots nRoots = SolveEquation(coefs, roots);
+	OutputRoots(nRoots, roots);
 
 	return 0;
 }
 
 
-cntRoots SolveEquation(double *coefs, double *x1, double *x2) {
+cntRoots SolveEquation(double *coefs, double *roots) {
 	assert(isfinite (coefs[0]));
 	assert(isfinite (coefs[1]));
 	assert(isfinite (coefs[2]));
-	assert(x1 != NULL);
-	assert(x2 != NULL);
+	assert(roots != NULL);
 
 	if (CompWithNull(coefs[0]) == EQUAL) {
 		if (CompWithNull(coefs[1]) == EQUAL) {
@@ -66,11 +65,11 @@ cntRoots SolveEquation(double *coefs, double *x1, double *x2) {
 			}
 		}
 		else {
-			return linear_equation(x1, coefs[1], coefs[2]);
+			return linear_equation(&(roots[0]), coefs[1], coefs[2]);
 		}
 	}
 	else {
-		return square_equation(x1, x2, coefs);
+		return square_equation(roots, coefs);
 	}
 }
 
@@ -87,16 +86,15 @@ cntRoots linear_equation(double *x1, double b, double c) {
 }
 
 
-cntRoots square_equation(double *x1, double *x2, double *coefs) {
+cntRoots square_equation(double *roots, double *coefs) {
 	assert(isfinite (coefs[0]));
 	assert(isfinite (coefs[1]));
 	assert(isfinite (coefs[2]));
-	assert(x1 != NULL);
-	assert(x2 != NULL);
+	assert(roots != NULL);
 
 	if (CompWithNull(coefs[2]) == EQUAL) {
-		*x1 = 0;
-		linear_equation(x2, coefs[0], coefs[1]);	// call linear_equation		ax+b=0
+		roots[0] = 0;
+		linear_equation(&(roots[1]), coefs[0], coefs[1]);	// call linear_equation		ax+b=0
 
 		return TWO;
 	}
@@ -104,13 +102,13 @@ cntRoots square_equation(double *x1, double *x2, double *coefs) {
 		double disc = coefs[1] * coefs[1] - 4 * coefs[0] * coefs[2];
 
 		if (CompWithNull(disc) == EQUAL) {
-			*x1 = - (coefs[1] / (2 * coefs[0]));
+			roots[0] = - (coefs[1] / (2 * coefs[0]));
 
 			return ONE;
 		}
 		else if (disc > 0) {			// add func for compare double and null
-			*x1 = (-coefs[1] - sqrt(disc)) / (2 * coefs[0]);
-			*x2 = (-coefs[1] + sqrt(disc)) / (2 * coefs[0]);
+			roots[0] = (-coefs[1] - sqrt(disc)) / (2 * coefs[0]);
+			roots[1] = (-coefs[1] + sqrt(disc)) / (2 * coefs[0]);
 
 			return TWO;
 		}
@@ -160,7 +158,7 @@ int Input(double *coefs) {
 } 
 
 
-int OutputRoots(cntRoots nRoots, double x1, double x2) {
+int OutputRoots(cntRoots nRoots, double *roots) {
 	switch (nRoots){
 		case INF:
 			printf("The equation has an infinity number of roots.\n");
@@ -169,10 +167,10 @@ int OutputRoots(cntRoots nRoots, double x1, double x2) {
 			printf("There are no roots.\n");
 			return 1;
 		case ONE:
-			printf("There is 1 roots: %lg.\n", x1);
+			printf("There is 1 roots: %lg.\n", roots[0]);
 			return 1;
 		case TWO:
-			printf("There is 2 roots: %lg and %lg.\n", x1, x2);
+			printf("There is 2 roots: %lg and %lg.\n", roots[0], roots[1]);
 			return 1;
 		default:
 			printf("Unknown number of solutions");
