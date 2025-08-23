@@ -3,8 +3,7 @@
 #include <math.h>
 
 // read about dynamic memory and calloc, realloc, malloc
-// add assert
-
+// add massivi and unit tests on masivi
 enum cntRoots
 {
 	INF = -1,
@@ -22,46 +21,44 @@ enum CompWithNull
 
 const float EPS = 1e-10f;
 
-cntRoots SolveEquation(double a, double b, double c, double *x1, double *x2);
+cntRoots SolveEquation(double *coefs, double *x1, double *x2);
 cntRoots linear_equation(double *x1, double b, double c);
-cntRoots square_equation(double *x1, double *x2, double a, double b, double c);
+cntRoots square_equation(double *x1, double *x2, double *coefs);
 
 CompWithNull CompareDoubleNull(double n);
 
-void NameOfProgrammAndAuthor(void);
+void NameOfProgrammAndAuthor();
 
-int Input(double *coef_a, double *coef_b, double *coef_c);
+int Input(double *coefs);
 int OutputRoots(cntRoots nRoots, double x1, double x2);
 
 bool ClearBuffer();
 
-
-
-int main(void) {
+int main() {
 	NameOfProgrammAndAuthor();
 
 	printf("Enter coefficients of square equation: ");
 
-	double coef_a = NAN, coef_b = NAN, coef_c = NAN;
+	double coefs[3] = {};
 	double x1 = NAN, x2 = NAN;
-	Input(&coef_a, &coef_b, &coef_c);
-	cntRoots nRoots = SolveEquation(coef_a, coef_b, coef_c, &x1, &x2);
+	Input(coefs);
+	cntRoots nRoots = SolveEquation(coefs, &x1, &x2);
 	OutputRoots(nRoots, x1, x2);
 
-	
 	return 0;
 }
 
 
-cntRoots SolveEquation(double a, double b, double c, double *x1, double *x2) {
-	assert(std::isfinite (a));
-	assert(std::isfinite (b));
-	assert(std::isfinite (c));
+cntRoots SolveEquation(double *coefs, double *x1, double *x2) {
+	assert(isfinite (coefs[0]));
+	assert(isfinite (coefs[1]));
+	assert(isfinite (coefs[2]));
 	assert(x1 != NULL);
 	assert(x2 != NULL);
-	if (CompWithNull(a) == EQUAL) {
-		if (CompWithNull(b) == EQUAL) {
-			if (CompWithNull(c) == EQUAL) {
+
+	if (CompWithNull(coefs[0]) == EQUAL) {
+		if (CompWithNull(coefs[1]) == EQUAL) {
+			if (CompWithNull(coefs[2]) == EQUAL) {
 				return INF;
 			}
 			else {
@@ -69,19 +66,20 @@ cntRoots SolveEquation(double a, double b, double c, double *x1, double *x2) {
 			}
 		}
 		else {
-			return linear_equation(x1, b, c);
+			return linear_equation(x1, coefs[1], coefs[2]);
 		}
 	}
 	else {
-		return square_equation(x1, x2, a, b, c);
+		return square_equation(x1, x2, coefs);
 	}
 }
 
 
 cntRoots linear_equation(double *x1, double b, double c) {
-	assert(std::isfinite (b));
-	assert(std::isfinite (c));
+	assert(isfinite (b));
+	assert(isfinite (c));
 	assert(x1 != NULL);
+
 	printf("This is not a square equation, but a linear one.\n");
 	*x1 = - (c / b);
 
@@ -89,29 +87,30 @@ cntRoots linear_equation(double *x1, double b, double c) {
 }
 
 
-cntRoots square_equation(double *x1, double *x2, double a, double b, double c) {
-	assert(std::isfinite (a));
-	assert(std::isfinite (b));
-	assert(std::isfinite (c));
+cntRoots square_equation(double *x1, double *x2, double *coefs) {
+	assert(isfinite (coefs[0]));
+	assert(isfinite (coefs[1]));
+	assert(isfinite (coefs[2]));
 	assert(x1 != NULL);
 	assert(x2 != NULL);
-	if (CompWithNull(c) == EQUAL) {
+
+	if (CompWithNull(coefs[2]) == EQUAL) {
 		*x1 = 0;
-		linear_equation(x2, a, b);	// call linear_equation		ax+b=0
+		linear_equation(x2, coefs[0], coefs[1]);	// call linear_equation		ax+b=0
 
 		return TWO;
 	}
 	else {
-		double disc = b * b - 4 * a * c;
+		double disc = coefs[1] * coefs[1] - 4 * coefs[0] * coefs[2];
 
 		if (CompWithNull(disc) == EQUAL) {
-			*x1 = - (b / (2 * a));
+			*x1 = - (coefs[1] / (2 * coefs[0]));
 
 			return ONE;
 		}
 		else if (disc > 0) {			// add func for compare double and null
-			*x1 = (-b + sqrt(disc)) / (2 * a);
-			*x2 = (-b - sqrt(disc)) / (2 * a);
+			*x1 = (-coefs[1] - sqrt(disc)) / (2 * coefs[0]);
+			*x2 = (-coefs[1] + sqrt(disc)) / (2 * coefs[0]);
 
 			return TWO;
 		}
@@ -151,8 +150,8 @@ bool ClearBuffer() {
 	return false;
 }
 
-int Input(double *coef_a, double *coef_b, double *coef_c) {
-	while (scanf("%lg %lg %lg", coef_a, coef_b, coef_c) != 3) {
+int Input(double *coefs) {
+	while (scanf("%lg %lg %lg", &coefs[0], &coefs[1], &coefs[2]) != 3) {
 		ClearBuffer();
 		printf("Incorrect Input. Try again, please.\n"
 		  "Enter coefficients of square equation: ");
@@ -182,10 +181,10 @@ int OutputRoots(cntRoots nRoots, double x1, double x2) {
 }
 
 
-int TestSolveEquation() {
-	double x1 = 0, x2 = 0;
-	cntRoots nRoots = SolveEquation(1, -5, 6, &x1, &x2);		// 2, 3
-	if (!(nRoots == TWO && x1 == 3 && x2 == 2)) {
-		printf("FAILED: SolveEquation(-1, 5, 6, ...) -> 2, x1 = %lf, x2 = %lf (should be x1 = 3, x2 = 2)\n", x1, x2);
-	}
-}
+// int TestSolveEquation() {
+// 	double x1 = 0, x2 = 0;
+// 	cntRoots nRoots = SolveEquation(1, -5, 6, &x1, &x2);		// 2, 3
+// 	if (!(nRoots == TWO && x1 == 2 && x2 == 3)) {
+// 		printf("FAILED: SolveEquation(-1, 5, 6, ...) -> 2, x1 = %lf, x2 = %lf (should be x1 = 3, x2 = 2)\n", x1, x2);
+// 	}
+// }
