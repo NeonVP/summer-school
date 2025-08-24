@@ -12,9 +12,7 @@
 // TODO: add your assert
 // TODO: add struct
 // TODO: add test func for 1 example
-// TODO: add const
-// TODO: find or read about machine eps
-
+// TODO: add more files
 
 /*-------COLORS-------*/
 #define COLOR_RED		"\x1b[31m"
@@ -25,7 +23,7 @@
 #define COLOR_RESET		"\x1b[0m"
 #define GRID			"\x1b[35m # \x1b[0m"
 
-const float EPS = 2e-10;
+const float EPS = 2.00000003e-10f;
 
 enum cntRoots
 {
@@ -45,6 +43,13 @@ enum Comparing
 	BELLOW = -1
 };
 
+enum Errors
+{
+	Err_NONE = 0,
+	Err_nullptr = 1,
+	Err_infinitcoef = 2
+};
+
 struct Coefficients {
 	double coef_a = NAN, coef_b = NAN, coef_c = NAN;
 };
@@ -57,9 +62,14 @@ struct EquationRoots {
 
 
 
-void SolveEquation(const Coefficients *coefs, EquationRoots *roots);
-void linear_equation(const Coefficients *coefs, EquationRoots *roots);
-void square_equation(const Coefficients *coefs, EquationRoots *roots);
+void SolveEquation(const Coefficients *coefs, EquationRoots *roots, Errors *err);
+void linear_equation(const Coefficients *coefs, EquationRoots *roots, Errors *err);
+void square_equation(const Coefficients *coefs, EquationRoots *roots, Errors *err);
+
+void isinfinite(Errors *err, const double number, char func[]);
+void isnullptr(Errors *err, const Coefficients *coefs, const EquationRoots *roots, char* func);
+void ErrCheck(Errors *err, const Coefficients *coefs, const EquationRoots *roots, char func[]);
+
 
 Comparing CompareDoubleToDouble(const double number1, const double number2);
 
@@ -74,13 +84,17 @@ void TestSolveEquation();
 
 int main() {
 	NameOfProgrammAndAuthor();
+	Errors err = Err_NONE;
 	Coefficients coefs = {};
 	EquationRoots roots = {};
 	Input(&coefs);
-	SolveEquation(&coefs, &roots);
+	SolveEquation(&coefs, &roots, &err);
 
-	OutputRoots(&roots);
-	return 0;
+	if (err == Err_NONE) {
+		OutputRoots(&roots);
+		return 0;
+	}
+	return 1;
 }
 
 // int main() {
@@ -90,76 +104,101 @@ int main() {
 // }
 
 
-void SolveEquation(const Coefficients *coefs, EquationRoots *roots) {
-	assert(coefs != nullptr);
-	assert(roots != nullptr);
-	assert(isfinite(coefs->coef_a));
-	assert(isfinite(coefs->coef_b));
-	assert(isfinite(coefs->coef_c));
-
-	if (CompareDoubleToDouble(coefs->coef_a, 0) == EQUAL) {
-		linear_equation(coefs, roots);
-	}
-	else {
-		square_equation(coefs, roots);
+void isinfinite(Errors *err, const double number, char func[]) {
+	if (!isfinite(number)) {
+		printf(COLOR_RED "Danger!!! There is an infunite coefficient in func %s.\n" COLOR_RESET, func);
+		*err = Err_infinitcoef;
 	}
 }
 
 
-void linear_equation(const Coefficients *coefs, EquationRoots *roots) {
-	assert(coefs != nullptr);
-	assert(roots != nullptr);
-	assert(isfinite(coefs->coef_b));
-	assert(isfinite(coefs->coef_c));
+void isnullptr(Errors *err, const Coefficients *coefs, const EquationRoots *roots, char* func) {
+	if (coefs == nullptr) {
+		printf(COLOR_RED "Danger!!! There is a null pointer of coefs in func %s.\n" COLOR_RESET, func);
+		*err = Err_nullptr;
+	}
+	if (roots == nullptr) {
+		printf(COLOR_RED "Danger!!! There are a null pointer of roots in func %s.\n" COLOR_RESET, func);
+		*err = Err_nullptr;
+	}
+}
 
-	if (CompareDoubleToDouble(coefs->coef_b, 0) == EQUAL) {
-		if (CompareDoubleToDouble(coefs->coef_c, 0) == EQUAL) {
-			roots->nRoots = INF;
+
+void ErrCheck(Errors *err, const Coefficients *coefs, const EquationRoots *roots, char func[]) {
+	isnullptr(err, coefs, roots, func);
+	isinfinite(err, coefs->coef_a, func);
+	isinfinite(err, coefs->coef_b, func);
+	isinfinite(err, coefs->coef_c, func);
+}
+
+
+void SolveEquation(const Coefficients *coefs, EquationRoots *roots, Errors *err) {
+	char name_func[] = "SolveEq";
+
+	ErrCheck(err, coefs, roots, name_func);
+	if (*err == Err_NONE) {
+		if (CompareDoubleToDouble(coefs->coef_a, 0) == EQUAL) {
+			linear_equation(coefs, roots, err);
 		}
 		else {
-			roots->nRoots = ZERO;
+			square_equation(coefs, roots, err);
 		}
 	}
-	else {
-		roots->x1 = - (coefs->coef_c / coefs->coef_b);
+}
 
-		roots->nRoots = ONE;
+void linear_equation(const Coefficients *coefs, EquationRoots *roots, Errors *err) {
+	char name_func[] = "line_eq";
+
+	ErrCheck(err, coefs, roots, name_func);
+	if (*err == Err_NONE) {
+		if (CompareDoubleToDouble(coefs->coef_b, 0) == EQUAL) {
+			if (CompareDoubleToDouble(coefs->coef_c, 0) == EQUAL) {
+				roots->nRoots = INF;
+			}
+			else {
+				roots->nRoots = ZERO;
+			}
+		}
+		else {
+			roots->x1 = - (coefs->coef_c / coefs->coef_b);
+
+			roots->nRoots = ONE;
+		}
 	}
 }
 
 
-void square_equation(const Coefficients *coefs, EquationRoots *roots) {
-	assert(coefs != nullptr);
-	assert(roots != nullptr);
-	assert(isfinite(coefs->coef_a));
-	assert(isfinite(coefs->coef_b));
-	assert(isfinite(coefs->coef_c));
+void square_equation(const Coefficients *coefs, EquationRoots *roots, Errors *err) {
+	char name_func[] = "sq_eq";
 
-	if (CompareDoubleToDouble(coefs->coef_c, 0) == EQUAL) {
-		roots->x1 = 0;
-		linear_equation(coefs, roots);
+	ErrCheck(err, coefs, roots, name_func);
+	if (*err == Err_NONE) {
+		if (CompareDoubleToDouble(coefs->coef_c, 0) == EQUAL) {
+			roots->x1 = 0;
+			linear_equation(coefs, roots, err);
 
-		roots->nRoots = TWO;
-	}
-	else {
-		double disc = coefs->coef_b * coefs->coef_b - 4 * coefs->coef_a * coefs->coef_c;
+			roots->nRoots = TWO;
+		}
+		else {
+			double disc = coefs->coef_b * coefs->coef_b - 4 * coefs->coef_a * coefs->coef_c;
 
-		switch (CompareDoubleToDouble(disc, 0)) {
-			case EQUAL:
-				roots->x1 = - (coefs->coef_b / (2 * coefs->coef_a));
-				roots->nRoots = ONE;
-				break;
-			case ABOVE:
-				roots->x1 = (- coefs->coef_b - sqrt(disc)) / (2 * coefs->coef_a);
-				roots->x2 = (- coefs->coef_b + sqrt(disc)) / (2 * coefs->coef_a);
-				roots->nRoots = TWO;
-				break;
-			case BELLOW:
-				roots->nRoots = ZERO;
-				break;
-			default:
-				roots->nRoots = UnknownErr;
-				break;
+			switch (CompareDoubleToDouble(disc, 0)) {
+				case EQUAL:
+					roots->x1 = - (coefs->coef_b / (2 * coefs->coef_a));
+					roots->nRoots = ONE;
+					break;
+				case ABOVE:
+					roots->x1 = (- coefs->coef_b - sqrt(disc)) / (2 * coefs->coef_a);
+					roots->x2 = (- coefs->coef_b + sqrt(disc)) / (2 * coefs->coef_a);
+					roots->nRoots = TWO;
+					break;
+				case BELLOW:
+					roots->nRoots = ZERO;
+					break;
+				default:
+					roots->nRoots = UnknownErr;
+					break;
+			}
 		}
 	}
 }
@@ -248,7 +287,8 @@ void OutputRoots(const EquationRoots *roots) {  // add asserts
 // 		{-2, 2, TWO},
 // 		{0, 3, TWO},
 // 		{0, 0, INF},
-// 		{0, 0, ZERO}};
+// 		{0, 0, ZERO}
+// 		};
 //
 // 	for (int i = 0; i < 8; i++) {
 // 		Coefficients coefs = tests_Coefs[i];
@@ -282,10 +322,4 @@ void OutputRoots(const EquationRoots *roots) {  // add asserts
 // 	else {
 // 		return 1;
 // 	}
-// }
-//
-// int RunTest() {
-// 	int passed = 0;
-//
-// 	passed += 1;
 // }
