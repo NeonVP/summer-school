@@ -1,26 +1,20 @@
-#include <assert.h>
+/*
+* CODESTYLE:
+* - #include
+* - #define
+* -
+ */
+
 #include <stdio.h>
 #include <math.h>
+#include <assert.h>
 
-// read about dynamic memory and calloc, realloc, malloc
-enum cntRoots
-{
-	INF = 3,
-	ZERO = 0, 
-	ONE = 1,
-	ONE_LINEAR = 11,
-	TWO = 2,
-	UnknownErr = 999
-};
+// TODO: add your assert
+// TODO: add struct
+// TODO: add test func for 1 example
+// TODO: add const
+// TODO: find or read about machine eps
 
-const char* ListCntRoots[4] = {"ZERO", "ONE", "TWO", "INF"};
-
-enum CompWithNull
-{
-	ABOVE = 1,
-	EQUAL = 0,
-	BELLOW = -1
-};
 
 /*-------COLORS-------*/
 #define COLOR_RED		"\x1b[31m"
@@ -31,18 +25,48 @@ enum CompWithNull
 #define COLOR_RESET		"\x1b[0m"
 #define GRID			"\x1b[35m # \x1b[0m"
 
-const float EPS = 1e-10f;
+const float EPS = 2e-10;
 
-cntRoots SolveEquation(double *coefs, double *roots);
-cntRoots linear_equation(double *x1, double b, double c);
-cntRoots square_equation(double *coefs, double *roots);
+enum cntRoots
+{
+	INF = 3,
+	ZERO = 0,
+	ONE = 1,
+	TWO = 2,
+	UnknownErr = 999
+};
 
-CompWithNull CompareDoubleNull(double n);
+const char* ListCntRoots[4] = {"ZERO", "ONE", "TWO", "INF"};
+
+enum Comparing
+{
+	ABOVE = 1,
+	EQUAL = 0,
+	BELLOW = -1
+};
+
+struct Coefficients {
+	double coef_a = NAN, coef_b = NAN, coef_c = NAN;
+};
+
+struct EquationRoots {
+	double x1 = NAN, x2 = NAN;
+	cntRoots nRoots = ZERO;
+};
+
+
+
+
+void SolveEquation(const Coefficients *coefs, EquationRoots *roots);
+void linear_equation(const Coefficients *coefs, EquationRoots *roots);
+void square_equation(const Coefficients *coefs, EquationRoots *roots);
+
+Comparing CompareDoubleToDouble(const double number1, const double number2);
 
 void NameOfProgrammAndAuthor();
 
-void Input(double *coefs);
-void OutputRoots(cntRoots nRoots, double *roots);
+void Input(Coefficients *coefs);
+void OutputRoots(const EquationRoots *roots);
 
 void ClearBuffer();
 
@@ -50,12 +74,12 @@ void TestSolveEquation();
 
 int main() {
 	NameOfProgrammAndAuthor();
+	Coefficients coefs = {};
+	EquationRoots roots = {};
+	Input(&coefs);
+	SolveEquation(&coefs, &roots);
 
-	double coefs[3] = {};
-	double roots[2] = {};
-	Input(coefs);
-	cntRoots nRoots = SolveEquation(coefs, roots);
-	OutputRoots(nRoots, roots);
+	OutputRoots(&roots);
 	return 0;
 }
 
@@ -66,81 +90,88 @@ int main() {
 // }
 
 
-cntRoots SolveEquation(double *coefs, double *roots) {
-	assert(coefs != NULL);
-	assert(roots != NULL);
-	assert(isfinite (coefs[0]));
-	assert(isfinite (coefs[1]));
-	assert(isfinite (coefs[2]));
+void SolveEquation(const Coefficients *coefs, EquationRoots *roots) {
+	assert(coefs != nullptr);
+	assert(roots != nullptr);
+	assert(isfinite(coefs->coef_a));
+	assert(isfinite(coefs->coef_b));
+	assert(isfinite(coefs->coef_c));
 
-	if (CompareDoubleNull(coefs[0]) == EQUAL) {
-		return linear_equation(&(roots[0]), coefs[1], coefs[2]);
+	if (CompareDoubleToDouble(coefs->coef_a, 0) == EQUAL) {
+		linear_equation(coefs, roots);
 	}
 	else {
-		return square_equation(coefs, roots);
+		square_equation(coefs, roots);
 	}
 }
 
 
-cntRoots linear_equation(double *x1, double b, double c) {
-	assert(isfinite (b));
-	assert(isfinite (c));
-	assert(x1 != NULL);
+void linear_equation(const Coefficients *coefs, EquationRoots *roots) {
+	assert(coefs != nullptr);
+	assert(roots != nullptr);
+	assert(isfinite(coefs->coef_b));
+	assert(isfinite(coefs->coef_c));
 
-	if (CompareDoubleNull(b) == EQUAL) {
-		if (CompareDoubleNull(c) == EQUAL) {
-			return INF;
+	if (CompareDoubleToDouble(coefs->coef_b, 0) == EQUAL) {
+		if (CompareDoubleToDouble(coefs->coef_c, 0) == EQUAL) {
+			roots->nRoots = INF;
 		}
 		else {
-			return ZERO;
+			roots->nRoots = ZERO;
 		}
 	}
 	else {
-		*x1 = - (c / b);
+		roots->x1 = - (coefs->coef_c / coefs->coef_b);
 
-		return ONE_LINEAR;
+		roots->nRoots = ONE;
 	}
 }
 
 
-cntRoots square_equation(double *coefs, double *roots) {
-	assert(coefs != NULL);
-	assert(roots != NULL);
-	assert(isfinite (coefs[0]));
-	assert(isfinite (coefs[1]));
-	assert(isfinite (coefs[2]));
+void square_equation(const Coefficients *coefs, EquationRoots *roots) {
+	assert(coefs != nullptr);
+	assert(roots != nullptr);
+	assert(isfinite(coefs->coef_a));
+	assert(isfinite(coefs->coef_b));
+	assert(isfinite(coefs->coef_c));
 
-	if (CompareDoubleNull(coefs[2]) == EQUAL) {
-		roots[0] = 0;
-		linear_equation(&(roots[1]), coefs[0], coefs[1]);	// call linear_equation		ax+b=0
+	if (CompareDoubleToDouble(coefs->coef_c, 0) == EQUAL) {
+		roots->x1 = 0;
+		linear_equation(coefs, roots);
 
-		return TWO;
+		roots->nRoots = TWO;
 	}
 	else {
-		double disc = coefs[1] * coefs[1] - 4 * coefs[0] * coefs[2];
+		double disc = coefs->coef_b * coefs->coef_b - 4 * coefs->coef_a * coefs->coef_c;
 
-		switch (CompareDoubleNull(disc)) {
+		switch (CompareDoubleToDouble(disc, 0)) {
 			case EQUAL:
-				roots[0] = - (coefs[1] / (2 * coefs[0]));
-				return ONE;
+				roots->x1 = - (coefs->coef_b / (2 * coefs->coef_a));
+				roots->nRoots = ONE;
+				break;
 			case ABOVE:
-				roots[0] = (-coefs[1] - sqrt(disc)) / (2 * coefs[0]);
-				roots[1] = (-coefs[1] + sqrt(disc)) / (2 * coefs[0]);
-				return TWO;
+				roots->x1 = (- coefs->coef_b - sqrt(disc)) / (2 * coefs->coef_a);
+				roots->x2 = (- coefs->coef_b + sqrt(disc)) / (2 * coefs->coef_a);
+				roots->nRoots = TWO;
+				break;
 			case BELLOW:
-				return ZERO;
+				roots->nRoots = ZERO;
+				break;
 			default:
-				return UnknownErr;
+				roots->nRoots = UnknownErr;
+				break;
 		}
 	}
 }
 
+Comparing CompareDoubleToDouble(const double number1, const double number2) {
+	assert(isfinite(number1));
+	assert(isfinite(number2));
 
-CompWithNull CompareDoubleNull(double n) {  //
-	if (n > EPS) {
+	if (number1 - number2 > EPS) {
 		return ABOVE;
 	}
-	else if (abs(n) < EPS) {
+	else if (abs(number1 - number2) < EPS) {
 		return EQUAL;
 	}
 	else {
@@ -162,9 +193,9 @@ void ClearBuffer() {
 	while (getchar() != '\n') {}
 }
 
-void Input(double *coefs) {
+void Input(Coefficients *coefs) {
 	printf(GRID "Enter" COLOR_YELLOW" coefficients" COLOR_RESET " of square equation: ");
-	while (scanf("%lg %lg %lg", &coefs[0], &coefs[1], &coefs[2]) != 3) {
+	while (scanf("%lg %lg %lg", &coefs->coef_a, &coefs->coef_b, &coefs->coef_c) != 3) {
 		ClearBuffer();
 		printf(GRID COLOR_RED "Incorrect Input." COLOR_RESET " Try again, please.\n"
 			   GRID "Enter" COLOR_YELLOW" coefficients" COLOR_RESET " of square equation: ");
@@ -172,8 +203,8 @@ void Input(double *coefs) {
 } 
 
 
-void OutputRoots(cntRoots nRoots, double *roots) {  //
-	switch (nRoots){
+void OutputRoots(const EquationRoots *roots) {  // add asserts
+	switch (roots->nRoots){
 		case INF:
 			printf(GRID "The equation has an infinity number of roots.\n");
 			break;
@@ -181,14 +212,10 @@ void OutputRoots(cntRoots nRoots, double *roots) {  //
 			printf(GRID "There are no roots.\n");
 			break;
 		case ONE:
-			printf(GRID "There is 1 roots: %lg.\n", roots[0]);
-			break;
-		case ONE_LINEAR:
-			printf(GRID "This is not a square equation, but a linear one.\n");
-			printf(GRID "There is 1 roots: %lg. \n", roots[0]);
+			printf(GRID "There is 1 roots: %lg.\n", roots->x1);
 			break;
 		case TWO:
-			printf(GRID "There is 2 roots: %lg and %lg.\n", roots[0], roots[1]);
+			printf(GRID "There is 2 roots: %lg and %lg.\n", roots->x1, roots->x2);
 			break;
 		case UnknownErr:
 			printf(GRID COLOR_RED "!!! Error !!!\n" COLOR_RESET " Unknown number of solutions. \n");
@@ -199,39 +226,66 @@ void OutputRoots(cntRoots nRoots, double *roots) {  //
 }
 
 
-/* TODO: colors for tests, debug unitests, read about structures */
-void TestSolveEquation() {
-	double tests[8][2][3] =
-		{
-		{{1, -5, 6}, {2, 3}},
-		{{1, -4, 4}, {2, 0}},
-		{{1, 2, 5}, {0, 0}},
-		{{0, 2, -4}, {2, 0}},
-		{{4, 0, -16}, {-2, 2}},
-		{{2, -6, 0}, {0, 3}},
-		{{0, 0, 0}, {0, 0}},
-		{{0, 0, 5}, {0, 0}}
-		};
-
-	cntRoots tests_nRoots[8] = {TWO, ONE, ZERO, ONE, TWO, TWO, INF, ZERO};
-
-	for (int i = 0; i < 8; i++) {
-		double roots[2] = {};
-		cntRoots nRoots = SolveEquation(tests[i][0], roots);
-
-		if (!(nRoots == tests_nRoots[i] && roots[0] == tests[i][1][0] && roots[1] == tests[i][1][1])) {
-			printf(COLOR_RED "FAILED: SolveEquation(%lf, %lf, %lf, ...) -> %s, x1 = %lf, x2 = %lf (should be x1 = %lf, x2 = %lf, %s)\n" COLOR_RESET,
-				   tests[i][0][0], tests[i][0][1], tests[i][0][2],
-				   ListCntRoots[nRoots],
-				   roots[0], roots[1],
-				   tests[i][1][0], tests[i][1][1], ListCntRoots[tests_nRoots[i]]);
-		}
-		else {
-			printf(COLOR_GREEN "OK: SolveEquation(%lf, %lf, %lf, ...) -> %s, x1 = %lf, x2 = %lf (should be x1 = %lf, x2 = %lf, %s)\n" COLOR_RESET,
-				   tests[i][0][0], tests[i][0][1], tests[i][0][2],
-				   ListCntRoots[nRoots],
-				   roots[0], roots[1],
-				   tests[i][1][0], tests[i][1][1], ListCntRoots[tests_nRoots[i]]);
-		}
-	}
-}
+// void TestSolveEquation() {
+// 	double tests_Coefs[8][3] =
+// 		{
+// 		{1, -5, 6},
+// 		{1, -4, 4},
+// 		{1, 2, 5},
+// 		{0, 2, -4},
+// 		{4, 0, -16},
+// 		{2, -6, 0},
+// 		{0, 0, 0},
+// 		{0, 0, 5}
+// 		};
+//
+// 	EquationRoots tests_Roots[8] =
+// 		{
+// 		{2, 3, TWO},
+// 		{2, 0, ONE},
+// 		{0, 0, ZERO},
+// 		{2, 0, ONE},
+// 		{-2, 2, TWO},
+// 		{0, 3, TWO},
+// 		{0, 0, INF},
+// 		{0, 0, ZERO}};
+//
+// 	for (int i = 0; i < 8; i++) {
+// 		Coefficients coefs = tests_Coefs[i];
+// 		EquationRoots roots = {};
+// 		SolveEquation(tests[i][0], roots);
+//
+// 		if (!(nRoots == tests_nRoots[i] && roots[0] == tests[i][1][0] && roots[1] == tests[i][1][1])) {
+// 			printf(COLOR_RED "FAILED: SolveEquation(%lf, %lf, %lf, ...) -> %s, x1 = %lf, x2 = %lf (should be x1 = %lf, x2 = %lf, %s)\n" COLOR_RESET,
+// 				   tests[i][0][0], tests[i][0][1], tests[i][0][2],
+// 				   ListCntRoots[nRoots],
+// 				   roots[0], roots[1],
+// 				   tests[i][1][0], tests[i][1][1], ListCntRoots[tests_nRoots[i]]);
+// 		}
+// 		else {
+// 			printf(COLOR_GREEN "OK: SolveEquation(%lf, %lf, %lf, ...) -> %s, x1 = %lf, x2 = %lf (should be x1 = %lf, x2 = %lf, %s)\n" COLOR_RESET,
+// 				   tests[i][0][0], tests[i][0][1], tests[i][0][2],
+// 				   ListCntRoots[nRoots],
+// 				   roots[0], roots[1],
+// 				   tests[i][1][0], tests[i][1][1], ListCntRoots[tests_nRoots[i]]);
+// 		}
+// 	}
+// }
+//
+// int OneTest() {
+// 	double roots[2] = {};
+// 	cntRoots nRoots = SolveEquation(coefs, roots);
+// 	if (!(roots[0] == roots_ref[0] && roots[1] == roots_ref[1] && nRoots == nRoots_ref)) {
+// 		printf("");
+// 		return 0;
+// 	}
+// 	else {
+// 		return 1;
+// 	}
+// }
+//
+// int RunTest() {
+// 	int passed = 0;
+//
+// 	passed += 1;
+// }
