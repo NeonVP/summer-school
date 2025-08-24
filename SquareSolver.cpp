@@ -1,10 +1,3 @@
-/*
-* CODESTYLE:
-* - #include
-* - #define
-* -
- */
-
 #include <stdio.h>
 #include <math.h>
 #include <assert.h>
@@ -13,6 +6,7 @@
 // TODO: add struct
 // TODO: add test func for 1 example
 // TODO: add more files
+// TODO: read about argc argv
 
 /*-------COLORS-------*/
 #define COLOR_RED		"\x1b[31m"
@@ -66,11 +60,6 @@ void SolveEquation(const Coefficients *coefs, EquationRoots *roots, Errors *err)
 void linear_equation(const Coefficients *coefs, EquationRoots *roots, Errors *err);
 void square_equation(const Coefficients *coefs, EquationRoots *roots, Errors *err);
 
-void isinfinite(Errors *err, const double number, char func[]);
-void isnullptr(Errors *err, const Coefficients *coefs, const EquationRoots *roots, char* func);
-void ErrCheck(Errors *err, const Coefficients *coefs, const EquationRoots *roots, char func[]);
-
-
 Comparing CompareDoubleToDouble(const double number1, const double number2);
 
 void NameOfProgrammAndAuthor();
@@ -85,8 +74,8 @@ void TestSolveEquation();
 int main() {
 	NameOfProgrammAndAuthor();
 	Errors err = Err_NONE;
-	Coefficients coefs = {};
-	EquationRoots roots = {};
+	Coefficients coefs = {NAN, NAN, NAN};
+	EquationRoots roots = {NAN, NAN};
 	Input(&coefs);
 	SolveEquation(&coefs, &roots, &err);
 
@@ -104,38 +93,28 @@ int main() {
 // }
 
 
-void isinfinite(Errors *err, const double number, char func[]) {
-	if (!isfinite(number)) {
-		printf(COLOR_RED "Danger!!! There is an infunite coefficient in func %s.\n" COLOR_RESET, func);
-		*err = Err_infinitcoef;
-	}
-}
 
-
-void isnullptr(Errors *err, const Coefficients *coefs, const EquationRoots *roots, char* func) {
+void SolveEquation(const Coefficients *coefs, EquationRoots *roots, Errors *err) {
 	if (coefs == nullptr) {
-		printf(COLOR_RED "Danger!!! There is a null pointer of coefs in func %s.\n" COLOR_RESET, func);
+		printf("Error in file:%s, function:%s and line:%d - Null pointer on coefs", __FILE__, __func__, __LINE__);
 		*err = Err_nullptr;
 	}
 	if (roots == nullptr) {
-		printf(COLOR_RED "Danger!!! There are a null pointer of roots in func %s.\n" COLOR_RESET, func);
+		printf("Error in file:%s, function:%s and line:%d - Null pointer on roots", __FILE__, __func__, __LINE__);
 		*err = Err_nullptr;
 	}
-}
-
-
-void ErrCheck(Errors *err, const Coefficients *coefs, const EquationRoots *roots, char func[]) {
-	isnullptr(err, coefs, roots, func);
-	isinfinite(err, coefs->coef_a, func);
-	isinfinite(err, coefs->coef_b, func);
-	isinfinite(err, coefs->coef_c, func);
-}
-
-
-void SolveEquation(const Coefficients *coefs, EquationRoots *roots, Errors *err) {
-	char name_func[] = "SolveEq";
-
-	ErrCheck(err, coefs, roots, name_func);
+	if (!isfinite(coefs->coef_a)) {
+		printf("Error in file:%s, function:%s and line:%d - An infinite A coefficient", __FILE__, __func__, __LINE__);
+		*err = Err_infinitcoef;
+	}
+	if (!isfinite(coefs->coef_b)) {
+		printf("Error in file:%s, function:%s and line:%d - An infinite B coefficient", __FILE__, __func__, __LINE__);
+		*err = Err_infinitcoef;
+	}
+	if (!isfinite(coefs->coef_c)) {
+		printf("Error in file:%s, function:%s and line:%d - An infinite C coefficient", __FILE__, __func__, __LINE__);
+		*err = Err_infinitcoef;
+	}
 	if (*err == Err_NONE) {
 		if (CompareDoubleToDouble(coefs->coef_a, 0) == EQUAL) {
 			linear_equation(coefs, roots, err);
@@ -147,9 +126,26 @@ void SolveEquation(const Coefficients *coefs, EquationRoots *roots, Errors *err)
 }
 
 void linear_equation(const Coefficients *coefs, EquationRoots *roots, Errors *err) {
-	char name_func[] = "line_eq";
-
-	ErrCheck(err, coefs, roots, name_func);
+	if (coefs == nullptr) {
+		printf("Error in file:%s, function:%s and line:%d - Null pointer on coefs", __FILE__, __func__, __LINE__);
+		*err = Err_nullptr;
+	}
+	if (roots == nullptr) {
+		printf("Error in file:%s, function:%s and line:%d - Null pointer on roots", __FILE__, __func__, __LINE__);
+		*err = Err_nullptr;
+	}
+	if (!isfinite(coefs->coef_a)) {
+		printf("Error in file:%s, function:%s and line:%d - An infinite A coefficient", __FILE__, __func__, __LINE__);
+		*err = Err_infinitcoef;
+	}
+	if (!isfinite(coefs->coef_b)) {
+		printf("Error in file:%s, function:%s and line:%d - An infinite B coefficient", __FILE__, __func__, __LINE__);
+		*err = Err_infinitcoef;
+	}
+	if (!isfinite(coefs->coef_c)) {
+		printf("Error in file:%s, function:%s and line:%d - An infinite C coefficient", __FILE__, __func__, __LINE__);
+		*err = Err_infinitcoef;
+	}
 	if (*err == Err_NONE) {
 		if (CompareDoubleToDouble(coefs->coef_b, 0) == EQUAL) {
 			if (CompareDoubleToDouble(coefs->coef_c, 0) == EQUAL) {
@@ -169,9 +165,26 @@ void linear_equation(const Coefficients *coefs, EquationRoots *roots, Errors *er
 
 
 void square_equation(const Coefficients *coefs, EquationRoots *roots, Errors *err) {
-	char name_func[] = "sq_eq";
-
-	ErrCheck(err, coefs, roots, name_func);
+	if (coefs == nullptr) {
+		printf("Error in file:%s, function:%s and line:%d - Null pointer on coefs", __FILE__, __func__, __LINE__);
+		*err = Err_nullptr;
+	}
+	if (roots == nullptr) {
+		printf("Error in file:%s, function:%s and line:%d - Null pointer on roots", __FILE__, __func__, __LINE__);
+		*err = Err_nullptr;
+	}
+	if (!isfinite(coefs->coef_a)) {
+		printf("Error in file:%s, function:%s and line:%d - An infinite A coefficient", __FILE__, __func__, __LINE__);
+		*err = Err_infinitcoef;
+	}
+	if (!isfinite(coefs->coef_b)) {
+		printf("Error in file:%s, function:%s and line:%d - An infinite B coefficient", __FILE__, __func__, __LINE__);
+		*err = Err_infinitcoef;
+	}
+	if (!isfinite(coefs->coef_c)) {
+		printf("Error in file:%s, function:%s and line:%d - An infinite C coefficient", __FILE__, __func__, __LINE__);
+		*err = Err_infinitcoef;
+	}
 	if (*err == Err_NONE) {
 		if (CompareDoubleToDouble(coefs->coef_c, 0) == EQUAL) {
 			roots->x1 = 0;
