@@ -7,7 +7,8 @@ enum cntRoots
 {
 	INF = 3,
 	ZERO = 0, 
-	ONE = 1, 
+	ONE = 1,
+	ONE_LINEAR = 11,
 	TWO = 2,
 	UnknownErr = 999
 };
@@ -28,6 +29,7 @@ enum CompWithNull
 #define COLOR_BLUE		"\x1b[34m"
 #define COLOR_CYAN		"\x1b[36m"
 #define COLOR_RESET		"\x1b[0m"
+#define GRID			"\x1b[35m # \x1b[0m"
 
 const float EPS = 1e-10f;
 
@@ -40,7 +42,7 @@ CompWithNull CompareDoubleNull(double n);
 void NameOfProgrammAndAuthor();
 
 void Input(double *coefs);
-int OutputRoots(cntRoots nRoots, double *roots);
+void OutputRoots(cntRoots nRoots, double *roots);
 
 void ClearBuffer();
 
@@ -49,7 +51,6 @@ void TestSolveEquation();
 int main() {
 	NameOfProgrammAndAuthor();
 
-	printf("Enter coefficients of square equation: ");
 	double coefs[3] = {};
 	double roots[2] = {};
 	Input(coefs);
@@ -95,10 +96,9 @@ cntRoots linear_equation(double *x1, double b, double c) {
 		}
 	}
 	else {
-		printf("This is not a square equation, but a linear one.\n");
 		*x1 = - (c / b);
 
-		return ONE;
+		return ONE_LINEAR;
 	}
 }
 
@@ -151,22 +151,23 @@ CompWithNull CompareDoubleNull(double n) {  //
 
 void NameOfProgrammAndAuthor() {
 	printf(	COLOR_CYAN
-			"##############################\n"
-			"#   Square equation solver   #\n"
-			"#         (c) NeonVP, 2025   #\n"
-			"##############################\n\n"
+			" ##############################\n"
+			" #   Square equation solver   #\n"
+			" #         (c) NeonVP, 2025   #\n"
+			" ##############################\n\n"
 			COLOR_RESET );
 }
 
 void ClearBuffer() {
-	while (getchar() != EOF) {}
+	while (getchar() != '\n') {}
 }
 
 void Input(double *coefs) {
+	printf(GRID "Enter" COLOR_YELLOW" coefficients" COLOR_RESET " of square equation: ");
 	while (scanf("%lg %lg %lg", &coefs[0], &coefs[1], &coefs[2]) != 3) {
 		ClearBuffer();
-		printf("Incorrect Input. Try again, please.\n"
-		  "Enter coefficients of square equation: ");
+		printf(GRID COLOR_RED "Incorrect Input." COLOR_RESET " Try again, please.\n"
+			   GRID "Enter" COLOR_YELLOW" coefficients" COLOR_RESET " of square equation: ");
 	}
 } 
 
@@ -174,15 +175,26 @@ void Input(double *coefs) {
 void OutputRoots(cntRoots nRoots, double *roots) {  //
 	switch (nRoots){
 		case INF:
-			printf("The equation has an infinity number of roots.\n");
+			printf(GRID "The equation has an infinity number of roots.\n");
+			break;
 		case ZERO:
-			printf("There are no roots.\n");
+			printf(GRID "There are no roots.\n");
+			break;
 		case ONE:
-			printf("There is 1 roots: %lg.\n", roots[0]);
+			printf(GRID "There is 1 roots: %lg.\n", roots[0]);
+			break;
+		case ONE_LINEAR:
+			printf(GRID "This is not a square equation, but a linear one.\n");
+			printf(GRID "There is 1 roots: %lg. \n", roots[0]);
+			break;
 		case TWO:
-			printf("There is 2 roots: %lg and %lg.\n", roots[0], roots[1]);
+			printf(GRID "There is 2 roots: %lg and %lg.\n", roots[0], roots[1]);
+			break;
+		case UnknownErr:
+			printf(GRID COLOR_RED "!!! Error !!!\n" COLOR_RESET " Unknown number of solutions. \n");
+			break;
 		default:
-			printf("!!! Error !!!\n Unknown number of solutions. \n");
+			break;
 	}
 }
 
