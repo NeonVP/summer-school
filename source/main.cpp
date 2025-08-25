@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "../include/common.h"
 #include "../include/I_WonnaBeAMathematician.h"
 #include "../include/UserInterface.h"
+#include "../include/errors.h"
 
 // TODO: read about argc argv
 
@@ -11,29 +11,35 @@ void TestSolveEquation();
 
 int main() {
 	NameOfProgrammAndAuthor();
-	Errors err = Err_NONE;
+
+	Errors err = ERR_NONE;
 	Coefficients coefs = {NAN, NAN, NAN};
 	EquationRoots roots = {NAN, NAN};
-	Input(&coefs);
-	SolveEquation(&coefs, &roots, &err);
 
-	if (err == Err_NONE) {
-		OutputRoots(&roots, &err);
-		if (err == Err_NONE) {
-			return 0;
-		}
-		else {
-			return 1;
-		}
+	err = Input(&coefs);
+
+	if (err == ERR_NONE) {
+		err = SolveEquation(&coefs, &roots);
 	}
-	return 1;
+	else {
+		return 1;
+	}
+
+	if (err == ERR_NONE) {
+		err = OutputRoots(&roots);
+	}
+	else {
+		return 1;
+	}
+
+	if (err == ERR_NONE) {
+		return 0;
+	}
+	else {
+		return 1;
+	}
 }
 
-// int main() {
-// 	TestSolveEquation();
-//
-// 	return 0;
-// }
 
 
 

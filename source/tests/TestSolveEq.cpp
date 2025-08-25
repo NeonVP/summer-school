@@ -1,10 +1,5 @@
 #include "../../include/TestSolveEq.h"
 
-#include <stdio.h>
-#include "../../include/common.h"
-#include "../../include/comparison.h"
-#include "../../include/I_WonnaBeAMathematician.h"
-
 void TestSolveEquation() {
     Coefficients tests_Coefs[] =
     	{
@@ -33,14 +28,14 @@ void TestSolveEquation() {
 
 
     for (int i = 0; i < 8; i++) {
-    	Errors err = Err_NONE;
+    	Errors err = ERR_NONE;
     	Coefficients coefs = tests_Coefs[i];
     	EquationRoots roots = {};
     	OneTest(&coefs, &roots, &err, &tests_Roots[i]);
     }
 }
 
-void OneTest(const Coefficients *coefs, EquationRoots *roots, Errors *err, const EquationRoots *test_Roots) {
+void RunTest(const Coefficients *coefs, EquationRoots *roots, Errors *err, const EquationRoots *test_Roots) {
 	SolveEquation(coefs, roots, err);
 	if (!(roots->nRoots == test_Roots->nRoots && CompareDoubleToDouble(roots->x1, test_Roots->x1) == EQUAL &&
 												 CompareDoubleToDouble(roots->x2, test_Roots->x2) == EQUAL)) {

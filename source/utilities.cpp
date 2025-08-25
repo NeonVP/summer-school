@@ -1,0 +1,19 @@
+#include "../include/utilities.h"
+
+const float EPS = 2.00000003e-10f;
+
+Comparison CompareDoubleToDouble(const double number1, const double number2) {
+    if (number1 - number2 > EPS) {
+        return ABOVE;
+    }
+    else if (abs(number1 - number2) < EPS) {
+        return EQUAL;
+    }
+    else {
+        return BELLOW;
+    }
+}
+
+void ClearBuffer() {
+    while (getchar() != '\n') {}
+}

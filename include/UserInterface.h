@@ -1,13 +1,15 @@
 #ifndef USERINTERFACE_H
 #define USERINTERFACE_H
 
-#include "common.h"
+#include <stdio.h>
+
+#include "I_WonnaBeAMathematician.h"
+#include "errors.h"
+#include "colors.h"
 
 void NameOfProgrammAndAuthor();
 
-void ClearBuffer();
-
-void Input(Coefficients *coefs);
-void OutputRoots(const EquationRoots *roots, Errors *err);
+Errors Input(Coefficients * const coefs);
+Errors OutputRoots(const EquationRoots * const roots);
 
 #endif
