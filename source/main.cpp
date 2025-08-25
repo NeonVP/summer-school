@@ -3,11 +3,8 @@
 
 #include "../include/I_WonnaBeAMathematician.h"
 #include "../include/UserInterface.h"
-#include "../include/errors.h"
 
 // TODO: read about argc argv
-
-void TestSolveEquation();
 
 int main() {
 	NameOfProgrammAndAuthor();
@@ -39,7 +36,3 @@ int main() {
 		return 1;
 	}
 }
-
-
-
-

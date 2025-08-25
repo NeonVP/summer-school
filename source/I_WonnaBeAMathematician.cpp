@@ -1,4 +1,4 @@
-#include "../../include/I_WonnaBeAMathematician.h"
+#include "../include/I_WonnaBeAMathematician.h"
 
 const char* ListCntRoots[] = {"ZERO", "ONE", "TWO", "INF"};
 
