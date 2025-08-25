@@ -1,7 +1,7 @@
 #include "../../include/I_WonnaBeAMathematician.h"
 
 #include <stdio.h>
-#include "../common.h"
+#include "../../include/common.h"
 
 #include "../../include/comparison.h"
 

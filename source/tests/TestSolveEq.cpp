@@ -1,9 +1,9 @@
-#include "TestSolveEq.h"
+#include "../../include/TestSolveEq.h"
 
 #include <stdio.h>
-#include "../include/common.h"
-#include "../math/comparison.h"
-#include "../math/I_WonnaBeAMathematician.h"
+#include "../../include/common.h"
+#include "../../include/comparison.h"
+#include "../../include/I_WonnaBeAMathematician.h"
 
 void TestSolveEquation() {
     Coefficients tests_Coefs[] =

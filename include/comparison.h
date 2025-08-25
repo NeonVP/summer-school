@@ -1,5 +1,5 @@
-#ifndef COMPARISSON_H_INCLUDED
-#define COMPARISSON_H_INCLUDED
+#ifndef COMPARISSON_H
+#define COMPARISSON_H
 
 const float EPS = 2.00000003e-10f;
 

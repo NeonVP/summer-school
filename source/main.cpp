@@ -4,10 +4,7 @@
 #include "../include/common.h"
 #include "../include/I_WonnaBeAMathematician.h"
 #include "../include/UserInterface.h"
-#include "../include/In_Output.h"
 
-// TODO: add test func for 1 example
-// TODO: add more files DONE
 // TODO: read about argc argv
 
 void TestSolveEquation();
