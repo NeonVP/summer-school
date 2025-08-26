@@ -46,7 +46,7 @@ int StdMode() {
 	}
 
 	if (err == ERR_NONE) {
-		printf("uwu\nCOMMIT GITHUB");
+		printf("uwu\nCOMMIT GITHUB\n");
 		return 0;
 	}
 	else {

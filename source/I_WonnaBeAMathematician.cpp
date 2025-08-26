@@ -1,6 +1,5 @@
 #include "../include/I_WonnaBeAMathematician.h"
 
-
 Errors SolveEquation(const Coefficients * const coefs, EquationRoots * const roots) {
 	MyAssert(roots != NULL, ERR_NULLPTR)
 	MyAssert(coefs != NULL, ERR_NULLPTR)
