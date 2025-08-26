@@ -1,9 +1,11 @@
 #include "../../include/TestSolveEq.h"
 
 void TestSolveEquation() {
+	FILE * file = fopen("testSolvEq.txt", "r");
+	// MyAssert(file != NULL, ERR_NULLPTR);
     Coefficients tests_Coefs[] =
     	{
-    	{1, -5, 6},
+		{1, -5, 6},
     	{1, -4, 4},
     	{1, 2, 5},
     	{0, 2, -4},
@@ -31,12 +33,12 @@ void TestSolveEquation() {
     	Errors err = ERR_NONE;
     	Coefficients coefs = tests_Coefs[i];
     	EquationRoots roots = {};
-    	OneTest(&coefs, &roots, &err, &tests_Roots[i]);
+    	RunTest(&coefs, &roots, &err, &tests_Roots[i]);
     }
 }
 
 void RunTest(const Coefficients *coefs, EquationRoots *roots, Errors *err, const EquationRoots *test_Roots) {
-	SolveEquation(coefs, roots, err);
+	SolveEquation(coefs, roots);
 	if (!(roots->nRoots == test_Roots->nRoots && CompareDoubleToDouble(roots->x1, test_Roots->x1) == EQUAL &&
 												 CompareDoubleToDouble(roots->x2, test_Roots->x2) == EQUAL)) {
 		printf(COLOR_RED "FAILED: SolveEquation(%lf, %lf, %lf, ...) -> %s, x1 = %lf, x2 = %lf (should be x1 = %lf, x2 = %lf, %s)\n" COLOR_RESET,

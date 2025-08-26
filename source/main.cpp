@@ -1,12 +1,28 @@
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
 
 #include "../include/I_WonnaBeAMathematician.h"
 #include "../include/UserInterface.h"
+#include "../include/AllTestsInOne.h"
+
+int StdMode();
 
 // TODO: read about argc argv
 
-int main() {
+int main(int argc, char* argv[]) {
+	if ((argc == 1) || (argc > 1 && !strcmp(argv[1], "-std"))) {
+		return StdMode();
+	}
+	else {
+		if (!strcmp(argv[1], "-t")) {
+			return TestMode();
+		}
+	}
+}
+
+int StdMode() {
+	printf("MOEW\n");
 	NameOfProgrammAndAuthor();
 
 	Errors err = ERR_NONE;
@@ -30,6 +46,7 @@ int main() {
 	}
 
 	if (err == ERR_NONE) {
+		printf("uwu\nCOMMIT GITHUB");
 		return 0;
 	}
 	else {

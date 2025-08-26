@@ -1,8 +1,7 @@
 #include "../include/I_WonnaBeAMathematician.h"
 
-const char* ListCntRoots[] = {"ZERO", "ONE", "TWO", "INF"};
 
-Errors SolveEquation(const Coefficients *coefs, EquationRoots *roots) {
+Errors SolveEquation(const Coefficients * const coefs, EquationRoots * const roots) {
 	MyAssert(roots != NULL, ERR_NULLPTR)
 	MyAssert(coefs != NULL, ERR_NULLPTR)
 	MyAssert(isfinite(coefs->coef_a), ERR_ISINFINITE)
@@ -18,7 +17,7 @@ Errors SolveEquation(const Coefficients *coefs, EquationRoots *roots) {
 }
 
 
-Errors linear_equation(const double * const b, const double * const c, double * const root, cntRoots *const nRoots) {
+Errors linear_equation(const double * const b, const double * const c, double * const root, cntRoots * const nRoots) {
 	MyAssert(b != NULL, ERR_NULLPTR)
 	MyAssert(c != NULL, ERR_NULLPTR)
 	MyAssert(isfinite(*b), ERR_ISINFINITE)
