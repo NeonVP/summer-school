@@ -1,6 +1,4 @@
-#include "../../include/TestSolveEq.h"
-
-#include <mutex>
+#include "../../include/AllTestsInOne.h"
 
 Errors TestSolveEquation() {
 	FILE * file_with_tests = fopen("source/tests/testSolvEq.txt", "r");
@@ -16,14 +14,12 @@ Errors TestSolveEquation() {
     EquationRoots * const tests_roots = (EquationRoots *)calloc(SIZE, sizeof(EquationRoots));
 	MyAssert(tests_roots != NULL, ERR_NULLPTR);
 
-	printf("1\n");
-
 	for (int j = 0; j < SIZE; j++) {
 		fscanf(file_with_tests, "%lf %lf %lf %lf %lf %d", &tests_coefs[j].coef_a, &tests_coefs[j].coef_b, &tests_coefs[j].coef_c,
 		                                       &tests_roots[j].x1, &tests_roots[j].x2, &tests_roots[j].nRoots);
 	}
 
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < SIZE; i++) {
     	Errors err = ERR_NONE;
     	Coefficients coefs = tests_coefs[i];
     	EquationRoots roots = {};
@@ -33,7 +29,7 @@ Errors TestSolveEquation() {
 	return ERR_NONE;
 }
 
-Errors RunTest(const Coefficients  * const coefs,
+Errors RunTestSolvEq(const Coefficients  * const coefs,
 	                 EquationRoots * const roots,
 	           const EquationRoots * const test_Roots) {
 	MyAssert(coefs      != NULL, ERR_NULLPTR);

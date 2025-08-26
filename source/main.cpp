@@ -6,6 +6,10 @@
 #include "../include/UserInterface.h"
 #include "../include/AllTestsInOne.h"
 
+enum Modes {
+
+};
+
 int StdMode();
 
 // TODO: read about argc argv
