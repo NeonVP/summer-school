@@ -6,6 +6,8 @@
 #include "../include/UserInterface.h"
 #include "../include/AllTestsInOne.h"
 
+// TODO: add Help Mode
+
 enum Modes {
 	HELP = 104,
 	STANDART = 115,

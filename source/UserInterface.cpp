@@ -12,11 +12,12 @@ void NameOfProgrammAndAuthor() {
 Errors Input(Coefficients * const coefs) {
     MyAssert(coefs != NULL, ERR_NULLPTR)
     printf(GRID "Enter" COLOR_YELLOW" coefficients" COLOR_RESET " of square equation: ");
-    while (scanf("%lg %lg %lg", &coefs->coef_a, &coefs->coef_b, &coefs->coef_c) != 3) {
+    while (scanf("%lg %lg %lg", &coefs->coef_a, &coefs->coef_b, &coefs->coef_c) != 3 || !IsBufClean()) {
         ClearBuffer();
         printf(GRID COLOR_RED "Incorrect Input." COLOR_RESET " Try again, please.\n"
                GRID "Enter" COLOR_YELLOW" coefficients" COLOR_RESET " of square equation: ");
     }
+
     return ERR_NONE;
 }
 
@@ -54,4 +55,14 @@ void meow_cat() {
            "   \\ '|| ||        \n"
 		   "    \\)()-())"")    \n"
 		    COLOR_RESET );
+}
+
+bool IsBufClean() {
+    int c = getchar();
+    while (c != '\n' && c != EOF) {
+        if (c != ' ') {
+            return false;
+        }
+    }
+    return true;
 }

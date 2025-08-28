@@ -12,6 +12,8 @@ void NameOfProgrammAndAuthor();
 Errors Input(Coefficients * const coefs);
 Errors OutputRoots(const EquationRoots * const roots);
 
+bool IsBufClean();
+
 void meow_cat();
 
 #endif
