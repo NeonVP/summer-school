@@ -1,6 +1,8 @@
 #include "../include/utilities.h"
 
-const float EPS = 2.00000003e-10f;
+const double EPS = 2.22045e-16;
+
+const char* ListComparison[] = {"BELLOW", "EQUAL", "ABOVE"};
 
 Comparison CompareDoubleToDouble(const double number1, const double number2) {
     if (number1 - number2 > EPS) {

@@ -6,9 +6,9 @@
 
 enum Comparison
 {
-    ABOVE = 1,
-    EQUAL = 0,
-    BELLOW = -1
+    ABOVE = 2,
+    EQUAL = 1,
+    BELLOW = 0
 };
 
 Comparison CompareDoubleToDouble(const double number1, const double number2);

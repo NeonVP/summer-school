@@ -43,3 +43,15 @@ Errors OutputRoots(const EquationRoots * const roots) {
     }
     return ERR_NONE;
 }
+
+void meow_cat() {
+	printf( COLOR_YELLOW
+		   "       /\\_/\\      \n"
+           "  /\\  / o o \\      \n"
+           " //\\\\ \\~(*)~/  MEOW     \n"
+           " `  \\/   ^ /        \n"
+           "   | \\|| ||        \n"
+           "   \\ '|| ||        \n"
+		   "    \\)()-())"")    \n"
+		    COLOR_RESET );
+}

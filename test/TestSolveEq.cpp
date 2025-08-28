@@ -1,7 +1,9 @@
-#include "../../include/AllTestsInOne.h"
+#include "../include/AllTestsInOne.h"
+
+const char * ListCntRoots[] = {"ZERO", "ONE", "TWO", "INF"};
 
 Errors TestSolveEquation() {
-	FILE * file_with_tests = fopen("source/tests/testSolvEq.txt", "r");
+	FILE * file_with_tests = fopen("test/testSolvEq.txt", "r");
 
 	MyAssert(file_with_tests != NULL, ERR_NULLPTR);
 
@@ -23,15 +25,13 @@ Errors TestSolveEquation() {
     	Errors err = ERR_NONE;
     	Coefficients coefs = tests_coefs[i];
     	EquationRoots roots = {};
-    	RunTest(&coefs, &roots, &tests_roots[i]);
+    	RunTestSolvEq(&coefs, &roots, &tests_roots[i]);
     }
 
 	return ERR_NONE;
 }
 
-Errors RunTestSolvEq(const Coefficients  * const coefs,
-	                 EquationRoots * const roots,
-	           const EquationRoots * const test_Roots) {
+Errors RunTestSolvEq(const Coefficients  * const coefs, EquationRoots * const roots, const EquationRoots * const test_Roots) {
 	MyAssert(coefs      != NULL, ERR_NULLPTR);
 	MyAssert(roots      != NULL, ERR_NULLPTR);
 	MyAssert(test_Roots != NULL, ERR_NULLPTR);

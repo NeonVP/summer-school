@@ -19,15 +19,14 @@ SOURCES = source/main.cpp \
 		  source/UserInterface.cpp \
 		  source/utilities.cpp \
 		  source/I_WonnaBeAMathematician.cpp \
-		  source/tests/TestSolveEq.cpp \
-		  source/tests/AllTestsInOne.cpp
+		  test/TestSolveEq.cpp \
+		  test/TestComparison.cpp
 
-INCLUDES = include/main.h \
-		   include/errors.h \
+INCLUDES = include/errors.h \
 		   include/UserInterface.h \
+		   include/colors.h \
 		   include/utilities.h \
 		   include/I_WonnaBeAMathematician.h \
-		   include/TestSolveEq.h \
 		   include/AllTestsInOne.h
 
 OBJECTS = $(SOURCES: .cpp=.o source/=obj/)

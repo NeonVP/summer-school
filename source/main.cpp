@@ -7,53 +7,86 @@
 #include "../include/AllTestsInOne.h"
 
 enum Modes {
-
+	HELP = 104,
+	STANDART = 115,
+	TEST = 116
 };
 
 int StdMode();
-
-// TODO: read about argc argv
+int TestMode();
+int HelpMode();
 
 int main(int argc, char* argv[]) {
-	if ((argc == 1) || (argc > 1 && !strcmp(argv[1], "-std"))) {
+	meow_cat();
+	if (argc == 1) {
 		return StdMode();
 	}
 	else {
-		if (!strcmp(argv[1], "-t")) {
-			return TestMode();
+		switch (argv[1][1]) {
+			case HELP:
+				return HelpMode();
+			case STANDART:
+				return StdMode();
+			case TEST:
+				return TestMode();
+			default:
+				printf("");
+				return 0;
 		}
 	}
 }
 
+
 int StdMode() {
-	printf("MOEW\n");
 	NameOfProgrammAndAuthor();
 
 	Errors err = ERR_NONE;
-	Coefficients coefs = {NAN, NAN, NAN};
-	EquationRoots roots = {NAN, NAN};
+	Coefficients coefs = {.coef_a = NAN, .coef_b = NAN, .coef_c = NAN};
+	EquationRoots roots = {.x1 = NAN, .x2 = NAN};
 
 	err = Input(&coefs);
+	IsERR_NONE(err)
 
-	if (err == ERR_NONE) {
-		err = SolveEquation(&coefs, &roots);
-	}
-	else {
-		return 1;
-	}
+	err = SolveEquation(&coefs, &roots);
+	IsERR_NONE(err)
 
-	if (err == ERR_NONE) {
-		err = OutputRoots(&roots);
-	}
-	else {
-		return 1;
-	}
+	err = OutputRoots(&roots);
+	IsERR_NONE(err)
 
-	if (err == ERR_NONE) {
-		printf("uwu\nCOMMIT GITHUB\n");
-		return 0;
-	}
-	else {
-		return 1;
-	}
+	printf(
+		   "    /\\___/\\                                           \n"
+           "   /       \\                                           \n"
+           "  l  u   u  l                                           \n"
+           "--l----*----l--                                         \n"
+           "   \\   w   /      - Meow! Thanks for using my produnct. \n"
+           "     ======       - for Developer: GIT COMMIT and PUSH  \n"
+           "   /       \\ __                                        \n"
+           "   l        l\\ \\                                      \n"
+           "   l        l/ /   -Vladimir Pyshkin-                   \n"
+           "   l  l l   l /                                         \n"
+           "    \\ ml lm /_/                                        \n"
+           );
+	return 0;
+}
+
+
+int TestMode() {
+	printf(GRID "Включен тест мод.\n");
+	Errors err = ERR_NONE;
+
+	err = TestSolveEquation();
+	IsERR_NONE(err)
+
+	printf("\n");
+
+	err = TestComparison();
+	IsERR_NONE(err)
+
+	return 0;
+}
+
+int HelpMode() {
+
+
+	return 0;
 }

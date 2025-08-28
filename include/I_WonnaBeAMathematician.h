@@ -17,7 +17,7 @@ enum cntRoots
     UnknownErr = 999
 };
 
-inline const char* ListCntRoots[] = {"ZERO", "ONE", "TWO", "INF"};
+// inline const char* ListCntRoots[] = {"ZERO", "ONE", "TWO", "INF"};
 
 struct Coefficients {
     double coef_a = NAN, coef_b = NAN, coef_c = NAN;
