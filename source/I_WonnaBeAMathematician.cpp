@@ -47,10 +47,17 @@ Errors square_equation(const Coefficients * const coefs, EquationRoots * const r
 	MyAssert(isfinite(coefs->coef_c), ERR_ISINFINITE)
 
 	if (CompareDoubleToDouble(coefs->coef_c, 0) == EQUAL) {
-		roots->x1 = 0;
-		linear_equation(&coefs->coef_a, &coefs->coef_b, &roots->x2, &roots->nRoots);
+		if (CompareDoubleToDouble(coefs->coef_b, 0) == EQUAL) {
+			roots->x1 = 0;
 
-		roots->nRoots = TWO;
+			roots->nRoots = ONE;
+		}
+		else {
+			roots->x1 = 0;
+			linear_equation(&coefs->coef_a, &coefs->coef_b, &roots->x2, &roots->nRoots);
+
+			roots->nRoots = TWO;
+		}
 	}
 	else {
 		double disc = coefs->coef_b * coefs->coef_b - 4 * coefs->coef_a * coefs->coef_c;

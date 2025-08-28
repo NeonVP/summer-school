@@ -88,7 +88,7 @@ int TestMode() {
 }
 
 int HelpMode() {
-
+	printf("");
 
 	return 0;
 }
