@@ -6,12 +6,10 @@
 #include "../include/UserInterface.h"
 #include "../include/AllTestsInOne.h"
 
-// TODO: add Help Mode
-
 enum Modes {
-	HELP = 104,
+	HELP     = 104,
 	STANDART = 115,
-	TEST = 116
+	TEST     = 116
 };
 
 int StdMode();
@@ -19,8 +17,8 @@ int TestMode();
 int HelpMode();
 
 int main(int argc, char* argv[]) {
-	meow_cat();
 	if (argc == 1) {
+		meow_cat();
 		return StdMode();
 	}
 	else {
@@ -28,12 +26,14 @@ int main(int argc, char* argv[]) {
 			case HELP:
 				return HelpMode();
 			case STANDART:
+				meow_cat();
 				return StdMode();
 			case TEST:
+				meow_cat();
 				return TestMode();
 			default:
-				printf("");
-				return 0;
+				printf("Type\n");
+				return 1;
 		}
 	}
 }
@@ -43,16 +43,16 @@ int StdMode() {
 	NameOfProgrammAndAuthor();
 
 	Errors err = ERR_NONE;
-	Coefficients coefs = {.coef_a = NAN, .coef_b = NAN, .coef_c = NAN};
+	Coefficients  coefs = {.coef_a = NAN, .coef_b = NAN, .coef_c = NAN};
 	EquationRoots roots = {.x1 = NAN, .x2 = NAN};
 
 	err = Input(&coefs);
 	IsERR_NONE(err)
 
-	err = SolveEquation(&coefs, &roots);
+	err = SolveEquation (&coefs, &roots);~
 	IsERR_NONE(err)
 
-	err = OutputRoots(&roots);
+	err = OutputRoots (&roots);
 	IsERR_NONE(err)
 
 	printf(
@@ -88,7 +88,31 @@ int TestMode() {
 }
 
 int HelpMode() {
-	printf("");
+	printf( COLOR_GREEN
+		   "     /\\     /\\                 \n"
+           "    {  `---'  }                  \n"
+           "    {  O   O  }                  \n"
+           "    ~~>  V  <~~                  \n"
+           "     \\  \\|/  /                 \n"
+           "      `-----'__                  \n"
+           "      /     \\  `^\\_            \n"
+           "     {       }\\ |\\_\\_   W     \n"
+           "     |  \\_/  |/ /  \\_\\_( )    \n"
+           "      \\__/  /(_E     \\__/      \n"
+           "    	(  /                     \n"
+           "         MM                      \n"
+             COLOR_RESET );
 
+	printf(GRID COLOR_CYAN "My Last Brain Cell During a Math Test\n" COLOR_RESET);
+
+
+	const char *list_of_commands[][2] = {
+		{"-s", "Standart Mode"},
+		{"-t", "Test Mode"},
+		{"-h", "Help Mode"}
+	};
+	for (int i = 0; i < 3; i++) {
+		printf(GRID COLOR_YELLOW"%s :" COLOR_BLUE "%s\n" COLOR_RESET, list_of_commands[i][0], list_of_commands[i][1]);
+	}
 	return 0;
 }
